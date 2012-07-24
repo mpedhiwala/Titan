@@ -12,9 +12,13 @@ def md5sum(filename):
              md5.update(chunk)
     return md5.hexdigest()
 
-baseDir = '/Users/mpedhiwala/Pictures'
+baseDir = ''
 
-filename = '/Users/mpedhiwala/test.py'
+baseDir = raw_input("Enter the base directory to search for duplicateFiles:")
+
+
+print "Will begin searching for duplicate files in " + baseDir;
+
 hashMap = {}
 
 def findDuplicates (dirName):
@@ -33,8 +37,10 @@ def findDuplicates (dirName):
 
 findDuplicates(baseDir)
 
-dictionaryFile = open ('duplicate.photos', 'wb')
+outputFileName = '_'.join( baseDir.split(os.sep)) + ".dupPhotos"
+
+print "Writing hashMap to " + outputFileName 
+
+dictionaryFile = open (outputFileName, 'wb')
 pickle.dump(hashMap, dictionaryFile)
-
-
 
