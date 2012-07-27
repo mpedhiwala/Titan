@@ -6,11 +6,15 @@ import glob
 import pickle
 
 def md5sum(filename):
-    md5 = hashlib.md5()
+    hex_digest=''
+    md5 = hashlib.md5()	
     with open(filename,'rb') as f: 
         for chunk in iter(lambda: f.read(128*md5.block_size), b''): 
              md5.update(chunk)
-    return md5.hexdigest()
+        hex_digest = md5.hexdigest()
+	f.close()
+	
+	return hex_digest
 
 baseDir = ''
 
@@ -31,9 +35,11 @@ def findDuplicates (dirName):
 			md5 = md5sum(file)
 			if md5 in hashMap:
 				hashMap[md5].add(file)
-			else:
+			elif md5 is not '':
 				hashMap[md5] = set([file])	
 
+
+				
 
 findDuplicates(baseDir)
 
