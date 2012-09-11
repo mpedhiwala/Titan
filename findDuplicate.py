@@ -1,3 +1,4 @@
+#
 print "Python Script to detect duplicate files"
 
 import os.path
