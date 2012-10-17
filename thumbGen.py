@@ -26,8 +26,17 @@ def maxSize(image, maxSize, method = 3):
 
 
 def processTitanImage(imgdir, fname):
-	img = Image.open(imgdir + fname)
+    
+	exif = None
+	img = None
+	
+	try:
+		img = Image.open(imgdir + fname)
+	except:
+		return False
+		
 	exif = img._getexif()
+	
 	if exif != None:
 		for tag, value in exif.items():
 			decoded = TAGS.get(tag, tag)
@@ -40,6 +49,7 @@ def processTitanImage(imgdir, fname):
 	#img.save(albumdir + '/' + fname, 'JPEG', quality=100)
 	img.thumbnail((192, 192), Image.ANTIALIAS)
 	img.save(fname, 'JPEG')
+	return True
  
 def processImage(imgdir, fname):
 	img = Image.open(imgdir + fname)

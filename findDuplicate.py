@@ -17,7 +17,7 @@ HOST_NAME = socket.gethostname();
 
 FILE_EXTENSION = [".jpeg", ".JPG", ".jpg", ".JPEG"]
 
-MONGO_HOST = '192.168.1.146'
+MONGO_HOST = '192.168.1.156'
 connection = Connection (MONGO_HOST)
 photo_db = connection.test
 photo_collection = photo_db.photo_collection
@@ -34,13 +34,17 @@ def filterFileTypes(filepath):
 
 # Procedure to generate a thumbnail and save it in mongo
 def saveThumbnailImg(filePath):
+	_id = None
 	print "Working on " + filePath
 	(dir,fname) = os.path.split (filePath)
 	dir = dir + os.sep
-	thumbGen.processTitanImage(dir, fname) 
-	thumbFile = open (fname, 'r')
-	_id = photo_thumb_collection.put(thumbFile, filename=fname)
-	os.remove (fname)
+	if thumbGen.processTitanImage(dir, fname) == True:
+		thumbFile = open (fname, 'r')
+		_id = photo_thumb_collection.put(thumbFile, filename=fname)
+		print "Deleteing thumbnail ..." + fname
+		thumbFile.close()
+		os.remove (fname)	
+		
 	return _id
 
 # Calculate a md5 hash for the file ...
@@ -65,7 +69,8 @@ def findDuplicates (dirName):
 			
 			# Generating a thumbnail and saving the thumbnail in mongo
 			_thumbId = saveThumbnailImg(file)
-			
+			if _thumbId == None:
+				continue
 			print '... searching for the md5 hash in the Mongo Photo Collection'
 			dup_photos = photo_collection.find_one({"file_hash":md5})
 			if dup_photos is None:
